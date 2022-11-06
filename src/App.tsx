@@ -6,11 +6,16 @@ import { Keyboard } from './Keyboard';
 import words from './wordList.json';
 
 function App() {
+  //getting a random word out of the json wordlist
   const [wordToGuess, setWordToGuess] = useState(() => {
     return words[Math.floor(Math.random() * words.length)];
   });
 
-  const [guessedLetter, setGuessedLetter] = useState<string[]>([]);
+  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+
+  const incorrectLetters = guessedLetters.filter(
+    (letter) => !wordToGuess.includes(letter),
+  );
 
   console.log(wordToGuess);
 
@@ -26,9 +31,14 @@ function App() {
       }}
     >
       <div style={{ fontSize: '2rem', textAlign: 'center' }}>Lose Win</div>
-      <HangManDrawing />
-      {/* <HangManWord />
-      <Keyboard /> */}
+      {/* passing down the length of the incorectletters and using them to generate the man */}
+      <HangManDrawing numberOfGuesses={incorrectLetters.length} />
+
+      <HangManWord guessedLetters={guessedLetters} wordToGuess={wordToGuess} />
+      <div style={{ alignSelf: 'stretch' }}>
+        {' '}
+        <Keyboard />
+      </div>
     </div>
   );
 }
