@@ -17,10 +17,12 @@ export function HangManWord({ guessedLetters, wordToGuess }: HangmanWordPRops) {
         fontFamily: 'monospace',
       }}
     >
+      {/*----------WORDS SPLIT into Individual letters, map through all of them and display them */}
       {wordToGuess.split('').map((letter, index) => (
         <span style={{ borderBottom: '.1em solid black' }} key={index}>
           <span
             style={{
+              // Conditionaly rendering  letters if the guessed letter is included in the word
               visibility: guessedLetters.includes(letter)
                 ? 'visible'
                 : 'hidden',

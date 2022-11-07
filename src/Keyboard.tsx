@@ -50,13 +50,18 @@ export function Keyboard({
       }}
     >
       {KEYS.map((key) => {
+        //if the key is included in the word
         const isActive = activeLetters.includes(key);
+        //if the key isn't included in the word
         const isInactive = inactiveLetters.includes(key);
         return (
           <button
+            //add the key letter into the array if it dosnt already exist in the array
             onClick={() => addGuessedLetter(key)}
+            //conditionaly passing a class name  to the button
             className={`${styles.btn} ${isActive ? styles.active : ''}
             ${isInactive ? styles.inactive : ''}`}
+            //if it is active or inactve disable the button
             disabled={isInactive || isActive}
             key={key}
           >
