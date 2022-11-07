@@ -3,9 +3,14 @@ import React from 'react';
 type HangmanWordPRops = {
   guessedLetters: string[];
   wordToGuess: string;
+  reveal?: boolean;
 };
 
-export function HangManWord({ guessedLetters, wordToGuess }: HangmanWordPRops) {
+export function HangManWord({
+  guessedLetters,
+  wordToGuess,
+  reveal = false,
+}: HangmanWordPRops) {
   return (
     <div
       style={{
@@ -23,9 +28,12 @@ export function HangManWord({ guessedLetters, wordToGuess }: HangmanWordPRops) {
           <span
             style={{
               // Conditionaly rendering  letters if the guessed letter is included in the word
-              visibility: guessedLetters.includes(letter)
-                ? 'visible'
-                : 'hidden',
+              visibility:
+                guessedLetters.includes(letter) || reveal
+                  ? 'visible'
+                  : 'hidden',
+              color:
+                !guessedLetters.includes(letter) && reveal ? 'red ' : 'black',
             }}
           >
             {letter}

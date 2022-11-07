@@ -5,11 +5,13 @@ import { Keyboard } from './Keyboard';
 
 import words from './wordList.json';
 
+function getWord() {
+  return words[Math.floor(Math.random() * words.length)];
+}
+
 function App() {
   //______________GENERATE RANDOM WORD FROM JSON ____________
-  const [wordToGuess, setWordToGuess] = useState(() => {
-    return words[Math.floor(Math.random() * words.length)];
-  });
+  const [wordToGuess, setWordToGuess] = useState(getWord);
 
   // filling the array with letters from keyboard
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
@@ -21,15 +23,21 @@ function App() {
 
   console.log(wordToGuess);
 
+  const isLoser = incorrectLetters.length >= 6;
+
+  const isWinner = wordToGuess
+    .split('')
+    .every((letter) => guessedLetters.includes(letter));
+
   //useCallback used to rerender only when the GueesedLetters change
   const addGuessedLetter = useCallback(
     (letter: string) => {
       // if the guessedletters<string["a","v"]> includes the key:a we pressed return nothing
-      if (guessedLetters.includes(letter)) return;
+      if (guessedLetters.includes(letter) || isLoser || isWinner) return;
       //otherwise update the curentLetters spread them and add the key value(the letter) on the end of the array
       setGuessedLetters((currentLetters) => [...currentLetters, letter]);
     },
-    [guessedLetters],
+    [guessedLetters, isWinner, isLoser],
   );
 
   //it should render only when the guessedLetters change
@@ -50,6 +58,23 @@ function App() {
     };
   }, [guessedLetters]);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const key = e.key;
+      if (key !== 'Enter') return;
+
+      e.preventDefault();
+      setGuessedLetters([]);
+      setWordToGuess(getWord());
+    };
+
+    document.addEventListener('keypress', handler);
+
+    return () => {
+      document.removeEventListener('keypress', handler);
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -61,14 +86,22 @@ function App() {
         alignItems: 'center',
       }}
     >
-      <div style={{ fontSize: '2rem', textAlign: 'center' }}>Lose Win</div>
+      <div style={{ fontSize: '2rem', textAlign: 'center' }}>
+        {isWinner && 'Winner! - Refresh to try again'}
+        {isLoser && 'Nice Try! - Refresh to try again'}
+      </div>
       {/* passing down the length of the incorectletters and using them to generate the man */}
       <HangManDrawing numberOfGuesses={incorrectLetters.length} />
       {/* passing down the guessed letter and the actual word to be guessed*/}
-      <HangManWord guessedLetters={guessedLetters} wordToGuess={wordToGuess} />
+      <HangManWord
+        reveal={isLoser}
+        guessedLetters={guessedLetters}
+        wordToGuess={wordToGuess}
+      />
       <div style={{ alignSelf: 'stretch' }}>
         {/*passing the logic filter of the array of letters if they are included and the ones that are not included*/}
         <Keyboard
+          disabled={isWinner || isLoser}
           activeLetters={guessedLetters.filter((letter) =>
             wordToGuess.includes(letter),
           )}
