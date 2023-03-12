@@ -2,9 +2,6 @@ HANG MAN
 
 ---
 
-1. Creating npm create vite
-2. Cleaning the app to return hi,
+npm run dev
 
 ---
-
-1. Creating json file with list of words
